@@ -54,10 +54,11 @@
 </template>
 
 <script>
-import request from "@/helpers/request";
-request("/auth").then((data) => {
+import Auth from "@/apis/auth";
+Auth.getInfo().then((data) => {
   console.log(data);
 });
+
 export default {
   name: "Login",
   data() {
@@ -100,10 +101,7 @@ export default {
       }
       this.register.isError = false;
       this.register.notice = "";
-      console.log(
-        `start register..., username: ${this.register.username} , password: ${this.register.password}`
-      );
-      request("/auth/register", "POST", {
+      Auth.register({
         username: this.register.username,
         password: this.register.password,
       }).then((data) => {
@@ -123,7 +121,7 @@ export default {
       }
       this.login.isError = false;
       this.login.notice = "";
-      request("/auth/login", "POST", {
+      Auth.login({
         username: this.login.username,
         password: this.login.password,
       }).then((data) => {
