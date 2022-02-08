@@ -73,9 +73,6 @@ export default {
           res.data.friendlyCreatedAt = friendlyDate(res.data.createdAt);
           this.notebooks.unshift(res.data);
           this.$message.success(res.msg);
-        })
-        .catch((res) => {
-          this.$message.error(res.msg);
         });
     },
 
@@ -95,9 +92,6 @@ export default {
         .then((res) => {
           notebook.title = title;
           this.$message.success(res.msg);
-        })
-        .catch((res) => {
-          this.$message.error(res.msg);
         });
     },
 
@@ -113,9 +107,6 @@ export default {
         .then((res) => {
           this.notebooks.splice(this.notebooks.indexOf(notebook), 1);
           this.$message.success(res.msg);
-        })
-        .catch((res) => {
-          this.$message.error(res.msg);
         });
     },
   },
