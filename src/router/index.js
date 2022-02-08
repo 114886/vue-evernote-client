@@ -10,7 +10,6 @@ export default new Router({
   routes: [
     {
       path: '/login',
-      nmae: 'Login',
       component: Login
     },
     {
@@ -18,11 +17,11 @@ export default new Router({
       component: NotebookList
     },
     {
-      path: '/note/:noteId',
+      path: '/note',
       component: NoteDetail
     },
     {
-      path: '/trash/:noteId',
+      path: '/trash',
       component: TrashDetail
     }
 
