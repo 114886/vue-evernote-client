@@ -1,7 +1,6 @@
 <template>
-  <div id="note-detail">
-    <h1>notebookId : {{ $route.query.notebookId }}</h1>
-    <h1>noteId : {{ $route.query.noteId }}</h1>
+  <div id="id" class="detail">
+    
   </div>
 </template>
 
