@@ -43,7 +43,6 @@ export default {
   created() {
     Notebooks.getAll()
       .then((res) => {
-        console.log(res);
         this.notebooks = res.data;
         this.curBook =
           this.notebooks.find(
@@ -84,7 +83,6 @@ export default {
 
     addNote() {
       Notes.addNote({ notebookId: this.curBook.id }).then((res) => {
-        console.log(res);
         this.notes.unshift(res.data);
       });
     },

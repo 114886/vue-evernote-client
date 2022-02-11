@@ -82,7 +82,6 @@ export default {
 
   computed: {
     previewContent() {
-      console.log(this.curNote.content || "");
       return md.render(this.curNote.content || "");
     },
   },
