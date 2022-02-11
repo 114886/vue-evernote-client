@@ -1,7 +1,11 @@
 <template>
   <div class="note-sidebar">
-    <span class="btn add-note" @click="addNote">添加笔记</span>
+    <span v-if="curBook.id" class="btn add-note" @click="onAddNote"
+      >添加笔记</span
+    >
+    <span v-if="!curBook.id" class="notebook-title">无笔记本</span>
     <el-dropdown
+      v-if="curBook.id"
       class="notebook-title"
       @command="handleCommand"
       placement="bottom"
@@ -12,13 +16,14 @@
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item
           v-for="notebook in notebooks"
-          :command="notebook.id"
           :key="notebook.id"
+          :command="notebook.id"
           >{{ notebook.title }}</el-dropdown-item
         >
         <el-dropdown-item command="trash">回收站</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+
     <div class="menu">
       <div>更新时间</div>
       <div>标题</div>
@@ -35,56 +40,60 @@
 </template>
 
 <script>
-import Notebooks from "@/apis/notebooks";
-import Notes from "@/apis/notes";
-import Bus from '@/helpers/bus'
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   created() {
-    Notebooks.getAll()
-      .then((res) => {
-        this.notebooks = res.data;
-        this.curBook =
-          this.notebooks.find(
-            (notebook) => notebook.id == this.$route.query.notebookId
-          ) ||
-          this.notebooks[0] ||
-          {};
-        return Notes.getAll({ notebookId: this.curBook.id });
+    this.getNotebooks()
+      .then(() => {
+        this.setCurBook({ curBookId: this.$route.query.notebookId });
+        if (this.curBook.id)
+          return this.getNotes({ notebookId: this.curBook.id });
       })
-      .then((res) => {
-        this.notes = res.data;
-        this.$emit("update:notes", this.notes);
-        Bus.$emit("update:notes", this.notes);
+      .then(() => {
+        this.setCurNote({ curNoteId: this.$route.query.noteId });
+        this.$router.replace({
+          path: "/note",
+          query: {
+            noteId: this.curNote.id,
+            notebookId: this.curBook.id,
+          },
+        });
       });
   },
 
   data() {
-    return {
-      notebooks: [],
-      notes: [],
-      curBook: {},
-    };
+    return {};
+  },
+
+  computed: {
+    ...mapGetters(["notebooks", "notes", "curBook", "curNote"]),
   },
 
   methods: {
+    ...mapMutations(["setCurBook", "setCurNote"]),
+
+    ...mapActions(["getNotebooks", "getNotes", "addNote"]),
+
     handleCommand(notebookId) {
       if (notebookId == "trash") {
         return this.$router.push({ path: "/trash" });
       }
-      this.curBook = this.notebooks.find(
-        (notebook) => notebook.id == notebookId
-      );
-      Notes.getAll({ notebookId }).then((res) => {
-        this.notes = res.data;
-        this.$emit("update:notes", this.notes);
+      this.$store.commit("setCurBook", { curBookId: notebookId });
+      this.getNotes({ notebookId }).then(() => {
+        this.setCurNote();
+        this.$router.replace({
+          path: "/note",
+          query: {
+            noteId: this.curNote.id,
+            notebookId: this.curBook.id,
+          },
+        });
       });
     },
 
-    addNote() {
-      Notes.addNote({ notebookId: this.curBook.id }).then((res) => {
-        this.notes.unshift(res.data);
-      });
+    onAddNote() {
+      this.addNote({ notebookId: this.curBook.id });
     },
   },
 };

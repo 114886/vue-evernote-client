@@ -25,7 +25,6 @@
                 <div class="button" @click="onRegister">创建账号</div>
               </div>
             </transition>
-
             <h3 @click="showLogin">登录</h3>
             <transition name="slide">
               <div v-bind:class="{ show: isShowLogin }" class="login">
@@ -54,15 +53,9 @@
 </template>
 
 <script>
-import Auth from "@/apis/auth";
-import Bus from "@/helpers/bus";
-
-// Auth.getInfo().then((data) => {
-//   console.log(data);
-// });
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-  name: "Login",
   data() {
     return {
       isShowLogin: true,
@@ -70,25 +63,30 @@ export default {
       login: {
         username: "",
         password: "",
-        notice: "请输入用户名或密码",
+        notice: "输入用户名和密码",
         isError: false,
       },
       register: {
         username: "",
         password: "",
-        notice: "创建账号后请记住用户名和密码",
+        notice: "创建账号后，请记住用户名和密码",
         isError: false,
       },
     };
   },
   methods: {
-    showRegister() {
-      this.isShowLogin = false;
-      this.isShowRegister = true;
-    },
+    ...mapActions({
+      loginUser: "login",
+      registerUser: "register",
+    }),
+
     showLogin() {
       this.isShowLogin = true;
       this.isShowRegister = false;
+    },
+    showRegister() {
+      this.isShowLogin = false;
+      this.isShowRegister = true;
     },
     onRegister() {
       if (!/^[\w\u4e00-\u9fa5]{3,15}$/.test(this.register.username)) {
@@ -101,14 +99,14 @@ export default {
         this.register.notice = "密码长度为6~16个字符";
         return;
       }
-      Auth.register({
+
+      this.registerUser({
         username: this.register.username,
         password: this.register.password,
       })
-        .then((data) => {
+        .then(() => {
           this.register.isError = false;
           this.register.notice = "";
-          Bus.$emit("userInfo", { username: this.register.username });
           this.$router.push({ path: "notebooks" });
         })
         .catch((data) => {
@@ -128,14 +126,14 @@ export default {
         this.login.notice = "密码长度为6~16个字符";
         return;
       }
-      Auth.login({
+
+      this.loginUser({
         username: this.login.username,
         password: this.login.password,
       })
-        .then((data) => {
+        .then(() => {
           this.login.isError = false;
           this.login.notice = "";
-          Bus.$emit("userInfo", { username: this.login.username });
           this.$router.push({ path: "notebooks" });
         })
         .catch((data) => {
@@ -147,7 +145,8 @@ export default {
 };
 </script>
 
-  
+
+
 <style lang="less">
 .modal-mask {
   position: fixed;
@@ -160,12 +159,10 @@ export default {
   display: table;
   transition: opacity 0.3s ease;
 }
-
 .modal-wrapper {
   display: table-cell;
   vertical-align: middle;
 }
-
 .modal-container {
   width: 800px;
   height: 500px;
@@ -176,7 +173,6 @@ export default {
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
   display: flex;
-
   .main {
     flex: 1;
     background: #36bc64
@@ -188,20 +184,17 @@ export default {
     width: 270px;
     border-left: 1px solid #ccc;
     overflow: hidden;
-
     h3 {
       padding: 10px 20px;
-      font-weight: normal;
       margin-top: -1px;
+      font-weight: normal;
       font-size: 16px;
       border-top: 1px solid #eee;
       cursor: pointer;
-
       &:nth-of-type(2) {
         border-bottom: 1px solid #eee;
       }
     }
-
     .button {
       background-color: #2bb964;
       height: 36px;
@@ -213,7 +206,6 @@ export default {
       margin-top: 18px;
       cursor: pointer;
     }
-
     .login,
     .register {
       padding: 0px 20px;
@@ -221,11 +213,9 @@ export default {
       height: 0;
       overflow: hidden;
       transition: height 0.4s;
-
       &.show {
         height: 193px;
       }
-
       input {
         display: block;
         width: 100%;
@@ -241,7 +231,6 @@ export default {
       input:focus {
         border: 3px solid #9dcaf8;
       }
-
       p {
         font-size: 12px;
         margin-top: 10px;
@@ -257,4 +246,3 @@ export default {
   }
 }
 </style>
-  

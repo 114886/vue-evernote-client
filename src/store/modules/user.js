@@ -1,7 +1,6 @@
 import Auth from '@/apis/auth'
 import router from '@/router'
 
-window.router = router
 const state = {
   user: null
 }
@@ -33,7 +32,17 @@ const actions = {
       })
   },
 
-  checkLogin({ commit }, payload) {
+  logout({ commit }, payload = { path: '/login' }) {
+    return Auth.logout()
+      .then(res => {
+        commit('setUser', { user: null })
+        console.log(payload)
+        router.push(payload)
+      })
+  },
+
+  checkLogin({ commit, state }, payload = { path: '/' }) {
+    if(state.user !== null) return Promise.resolve()
     return Auth.getInfo()
       .then(res => {
         if(!res.isLogin) {

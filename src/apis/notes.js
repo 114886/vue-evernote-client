@@ -1,5 +1,5 @@
 import request from '@/helpers/request'
-import { friendlyDate } from '@/helpers/util'
+import {friendlyDate} from '@/helpers/util'
 
 const URL = {
   GET: '/notes/from/:notebookId',
@@ -35,7 +35,7 @@ export default {
     return request(URL.DELETE.replace(':noteId', noteId), 'DELETE')
   },
 
-  addNote({ notebookId }, { title = '', content = '' } = { title: '', content: '' }) {
+  addNote({ notebookId },  { title = '', content = ''} = { title: '', content: ''}) {
     return new Promise((resolve, reject) => {
       request(URL.ADD.replace(':notebookId', notebookId), 'POST', { title, content })
         .then(res => {
