@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "upload": "cd dist; git init; git remote remove origin; git remote add origin git@github.com:114886/vue-evernote-client.git; git add . ; git commit -m \"modify\"; git push origin master"
   },
   "dependencies": {
     "axios": "^0.25.0",
